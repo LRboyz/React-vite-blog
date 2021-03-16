@@ -1,5 +1,5 @@
 # vite-react-ts-app
-**基于vite构建包含mobx+antd+typescript+eslint+scss的起步应用**
+**基于vite构建包含redux+antd+typescript+eslint+less的个人博客应用**
 
 - ## 第一步 `git clone`拉取代码
 
