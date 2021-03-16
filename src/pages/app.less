@@ -1,0 +1,11 @@
+@import '../themes/index.less';
+@import './reset.less';
+@mi-layout: ~'@{mi-prefix}layout';
+
+.app-container{
+    min-height: 100vh;
+    overflow: hidden;
+     .ant-layout{
+        background: var(--mi-body-color, @mi-body-color);
+    }
+}
