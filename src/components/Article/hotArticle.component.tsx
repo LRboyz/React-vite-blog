@@ -1,11 +1,16 @@
 import React from 'react';
-import { Avatar, Empty, Skeleton } from 'antd';
-import { LikeTwoTone, MessageTwoTone, FireOutlined } from '@ant-design/icons';
+import { Avatar, Badge, Empty, Skeleton } from 'antd';
+import { FireOutlined, EyeOutlined, LikeOutlined } from '@ant-design/icons';
 import './less/hotArticle.less';
-import { Status } from '../../types/base';
+import ArticleAPI from '../../request/api/article';
+import { useRequest } from 'ahooks';
+import { IArticle } from '../../interfaces/article.interface';
 
-function HotArticle(props: Props) {
-  const loading = props.loading === Status.inProgress ? true : false;
+const HotArticleList: React.FC = () => {
+  // const loading = props.loading === Status.inProgress ? true : false;
+  const { data, error, loading } = useRequest(() => {
+    return ArticleAPI.getArticleList();
+  });
   return (
     <div className="hot-container">
       <div className="hot-header">
@@ -13,64 +18,28 @@ function HotArticle(props: Props) {
         <span className="hot-title fs-xs">热门文章列表</span>
       </div>
       <div className="hot-group">
-        {/* <div className="article-item">
-          <div className="item-left">
-            <Avatar src="https://www.xcnte.com/usr/themes/handsome/assets/img/sj2/6.jpg" />
-          </div>
-          <div className="item-right">
-            <span className="article-title">MySQL千万级数据优化分析</span>
-            <div className="comment">
-              <div style={{ marginRight: 10 }}>
-                <MessageTwoTone style={{ fontSize: 12 }} />
-                <span>12</span>
+        {data?.map((item: IArticle, index: number) => {
+          return (
+            <div key={index} className="article-item">
+              <div className="item-left">
+                <Avatar src={item.thumb} />
               </div>
-              <div>
-                <LikeTwoTone style={{ fontSize: 12 }} />
-                <span>34</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="article-item">
-          <div className="item-left">
-            <Avatar src="https://www.xcnte.com/usr/themes/handsome/assets/img/sj2/6.jpg" />
-          </div>
-          <div className="item-right">
-            <span className="article-title">
-              Python + MongoDB 开发疫情监控系统
-            </span>
-            <div className="comment">
-              <div style={{ marginRight: 10 }}>
-                <MessageTwoTone style={{ fontSize: 12 }} />
-                <span>12</span>
-              </div>
-              <div>
-                <LikeTwoTone style={{ fontSize: 12 }} />
-                <span>34</span>
+              <div className="item-right">
+                <span className="article-title">{item.title}</span>
+                <div className="comment">
+                  <div style={{ marginRight: 15 }}>
+                    <EyeOutlined style={{ fontSize: 12 }} />
+                    <span>12</span>
+                  </div>
+                  <div>
+                    <LikeOutlined style={{ fontSize: 12 }} />
+                    <span>34</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="article-item">
-          <div className="item-left">
-            <Avatar src="https://www.xcnte.com/usr/themes/handsome/assets/img/sj2/6.jpg" />
-          </div>
-          <div className="item-right">
-            <span className="article-title">
-              React + TypeScript + Flask 全栈开发个人博客
-            </span>
-            <div className="comment">
-              <div style={{ marginRight: 10 }}>
-                <MessageTwoTone style={{ fontSize: 12 }} />
-                <span>12</span>
-              </div>
-              <div>
-                <LikeTwoTone style={{ fontSize: 12 }} />
-                <span>34</span>
-              </div>
-            </div>
-          </div>
-        </div> */}
+          );
+        })}
         <div style={{ width: '100%', paddingTop: '10px' }}>
           {loading && (
             <div>
@@ -89,14 +58,14 @@ function HotArticle(props: Props) {
               })}
             </div>
           )}
-          {props.loading !== Status.inProgress && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className="fs-xs empty" >暂无热门文章......(～￣▽￣)～</span>} />}
+          {/* 空数据 */}
+          {data?.length === 0 && !loading && (
+            <Empty description={<span className="fs-xs empty">暂无文章......(～￣▽￣)～</span>} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+          )}
         </div>
       </div>
     </div>
   );
-}
-
-type Props = {
-  loading: Status;
 };
-export default React.memo(HotArticle);
+
+export default React.memo(HotArticleList);

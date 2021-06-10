@@ -3,7 +3,8 @@
 @mi-layout: ~'@{mi-prefix}layout';
 
 .tag-container {
-  background: var(--mi-sider-color, @mi-sider-color);
+  margin-top: 20px;
+  background: var(--mi-card-color, @mi-card-color);
   box-shadow: 3px 4px 12px 0 rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   .tag-header {
@@ -15,6 +16,7 @@
     .tag-title {
       font-weight: bold;
       margin-left: 10px;
+      color: var(--mi-notice-text-color, @mi-font-color);
     }
   }
   .tag-group {
@@ -28,7 +30,7 @@
     }
     .tag-item {
       font-weight: bold;
-      color: #FFFFFF;
+      color: #ffffff;
       margin: 5px 10px 8px 10px;
       cursor: pointer;
       font-size: 12px;

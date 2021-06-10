@@ -1,54 +1,48 @@
 import React, { useState } from 'react';
 import './less/layout-page.less';
 import { Layout, Input, Button, Popover, Radio } from 'antd';
+import TagList from '../../components/tag/tagList.component';
 import LoginModal from '../../components/login/login.component';
-import SetTheme from '../../utils/set_theme';
 import { FormatPainterFilled } from '@ant-design/icons';
-import ArticleAPI from '../../request/api/article';
-import CategoryAPI from '../../request/api/category';
-import TagAPI from '../../request/api/tag';
-import { SC } from '../../store/SC/module';
 import Category from '../../components/category/category.component';
-import Tag from '../../components/tag/tagList.component';
-import HotArticle from '../../components/Article/hotArticle.component';
 import ArticleList from '../../components/Article/articleList.component';
-import { ArticleData, CategoryData, Status, TagData } from '../../types/base';
+import HotArticleList from '../../components/Article/hotArticle.component';
+import Advertisement from '../../components/advert/advert.component';
+import { Dispatch } from '../../redux/module';
+import { useTheme } from '../../hooks/useTheme';
+import { Store } from '../../redux/store';
+// import { ArticleData, CategoryData, Status, TagData } from '../../types/base';
 
-const LayoutPage = () => {
+const LayoutPage: React.FC<any> = () => {
   // state
   const { Header } = Layout;
   const [useLoginModal, setLoginModal] = useState(false);
-  const [initialLoadStatus, setInitialLoadStatus] = React.useState<Status>(Status.blank);
-  const [articleList, setArticleList] = React.useState<Array<ArticleData>>([]);
-  const [categoryList, setCategoryList] = React.useState<Array<CategoryData>>([]);
-  const [tagList, setTagList] = React.useState<Array<TagData>>([]);
-  const { Search } = Input;
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const { theme, setGlobalTheme } = useTheme();
+
   // function
   const onChange = (e: any) => {
     console.log(e.target.value);
-    SC.setState('themeMode', e.target.value);
-    SetTheme.setThemeVariables(SC.getState('themeMode'));
+    Dispatch.setState('themeMode', e.target.value);
+    console.log(Store.getState().themeMode, 'store');
+    setGlobalTheme(e.target.value);
+    // SetTheme.setThemeVariables(Dispatch.getState('themeMode'));
   };
   const fetchData = async () => {
     try {
-      setInitialLoadStatus(Status.inProgress);
-      const [articleList, categoryList, tagList] = await Promise.all([ArticleAPI.get_articles(), CategoryAPI.get_category_list(), TagAPI.get_tag_list()]);
-      setArticleList(articleList.data.data);
-      setCategoryList(categoryList.data.data);
-      setTagList(tagList.data.data);
-      setInitialLoadStatus(Status.success);
+      setLoading(true);
     } catch (error) {
-      setInitialLoadStatus(Status.failure);
+      setLoading(false);
     }
   };
   React.useEffect(() => {
-    setInitialLoadStatus(Status.inProgress);
+    setLoading(true);
     setTimeout(() => fetchData(), 1000);
   }, []);
-  // component
-  const content = () => {
+  // 主题面板
+  const themePanel = () => {
     return (
-      <Radio.Group onChange={onChange} style={{ display: 'flex' }} defaultValue={'dark'}>
+      <Radio.Group onChange={onChange} style={{ display: 'flex' }} defaultValue={theme}>
         <div style={{ padding: 15, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="https://file.makeit.vip/MIIT/M00/00/00/ajRkHWAJIqKARAkyAACmjWZTun0852.png" alt="" style={{ width: 80, height: 90 }} />
           <Radio value={'dark'} style={{ marginTop: 20 }}>
@@ -74,12 +68,11 @@ const LayoutPage = () => {
           <Search placeholder="搜索您喜欢的文章......" style={{ width: 200, marginLeft: 50 }} />
         </div> */}
         <div className="btn-group">
-          {/* <Button shape="round" style={{ marginRight: 10 }}  */}
-          <Popover content={content}>
+          {/* 主题面板 */}
+          <Popover content={themePanel}>
             <FormatPainterFilled className="themeIcon" />
           </Popover>
-
-          {/* </Button> */}
+          {/* 登录按钮 */}
           <Button shape="round" onClick={() => setLoginModal(true)}>
             登陆
           </Button>
@@ -93,14 +86,15 @@ const LayoutPage = () => {
     return (
       <div className="content">
         <div className="nav">
-          <Category {...{ categoryList: categoryList, loading: initialLoadStatus }} />
+          <Category />
         </div>
         <div className="main">
           <ArticleList />
         </div>
         <div className="aside">
-          <HotArticle {...{ loading: initialLoadStatus }} />
-          <Tag {...{ tagList: tagList, loading: initialLoadStatus }} />
+          <HotArticleList />
+          <Advertisement />
+          <TagList />
         </div>
       </div>
     );

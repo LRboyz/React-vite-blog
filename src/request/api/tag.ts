@@ -1,10 +1,13 @@
-import http, { httpError, HttpSuccessOrErrorType } from "../http";
-
+import { ITag } from '../../interfaces/tag.interface';
+import request from '../http';
 class TagAPI {
-    async get_tag_list(): Promise<HttpSuccessOrErrorType>{
-        return http.get("/blog/tag/list/").catch((err) => httpError(err));
-    }
+  async getTagList(params?: any): Promise<Array<ITag>> {
+    const result = await request('/blog_tags', {
+      method: 'GET',
+    });
+    const { data } = result;
+    return data;
+  }
 }
-
 
 export default new TagAPI();

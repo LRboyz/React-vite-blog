@@ -1,15 +1,16 @@
-import { PaginationConfig } from "../../interfaces/setting.interface";
-import http, { httpError, HttpSuccessOrErrorType } from "../http";
+import { IArticle } from './../../interfaces/article.interface';
+import { PageConfig } from '../../typings/global';
+import request from '../http';
 
 class ArticleAPI {
-  async get_articles(params?: PaginationConfig): Promise<HttpSuccessOrErrorType> {
-    return http.get("/blog/articles/", {
-        params:{
-            ...params
-        }
-    }).catch((err) => httpError(err));
+  async getArticleList(params?: PageConfig): Promise<Array<IArticle>> {
+    const result = await request('/blog_article', {
+      method: 'GET',
+      params,
+    });
+    const { data } = result;
+    return data;
   }
 }
 
 export default new ArticleAPI();
-
